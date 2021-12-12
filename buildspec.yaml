@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --no-include-email --region eu-west-1)
+      - REPOSITORY_URI_backend=950568811506.dkr.ecr.eu-west-1.amazonaws.com/profileconnector_backend
+      - REPOSITORY_URI_frontend=950568811506.dkr.ecr.eu-west-1.amazonaws.com/profileconnector_frontend
+  build:
+    commands:
+      - docker-compose -f docker-compose.yaml build
+  post_build:
+    commands:
+      - echo Build completed on `data`
+      - echo Pushing the Docker images...
+      - docker images
+      - docker push $REPOSITORY_URI_backend
+      - docker push $REPOSITORY_URI_frontend

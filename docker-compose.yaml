@@ -1,0 +1,21 @@
+version: "3.3"
+
+services:
+  backend:
+    image: 451158882614.dkr.ecr.eu-west-1.amazonaws.com/covidapp_backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    container_name: backend
+  frontend:
+    image: 451158882614.dkr.ecr.eu-west-1.amazonaws.com/covidapp_frontend
+    build:
+        context: ./client
+        dockerfile: ./Dockerfile
+    ports:
+        - "3000:3000"
+    container_name: frontend
+    links:
+        - "backend:be"

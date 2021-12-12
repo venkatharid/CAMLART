@@ -1,0 +1,14 @@
+FROM python
+
+WORKDIR /app
+
+COPY package*.json ./
+
+COPY . .
+
+# Add bash
+RUN pip install flask
+
+EXPOSE 5000
+
+CMD ["python", "server.py"]
