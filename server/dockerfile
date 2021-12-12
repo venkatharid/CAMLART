@@ -2,8 +2,6 @@ FROM python
 
 WORKDIR /app
 
-COPY package*.json ./
-
 COPY . .
 
 # Add bash
