@@ -6,8 +6,8 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --no-include-email --region eu-west-1)
-      - REPOSITORY_URI_backend=950568811506.dkr.ecr.eu-west-1.amazonaws.com/profileconnector_backend
-      - REPOSITORY_URI_frontend=950568811506.dkr.ecr.eu-west-1.amazonaws.com/profileconnector_frontend
+      - REPOSITORY_URI_backend=451158882614.dkr.ecr.eu-west-1.amazonaws.com/covidapp_backend
+      - REPOSITORY_URI_frontend=451158882614.dkr.ecr.eu-west-1.amazonaws.com/covidapp_frontend
   build:
     commands:
       - docker-compose -f docker-compose.yaml build
