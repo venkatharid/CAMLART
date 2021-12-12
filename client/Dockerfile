@@ -1,4 +1,4 @@
-FROM node:16
+FROM 451158882614.dkr.ecr.eu-west-1.amazonaws.com/node
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY . .
 
 # Add bash
 RUN npm install
-RUN npx browserslist@latest --update-db
+RUN npm --depth 20 update --save caniuse-lite browserslist
 
 EXPOSE 3000
 
