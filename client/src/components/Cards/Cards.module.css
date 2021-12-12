@@ -1,0 +1,40 @@
+.container{
+    margin-bottom: 20px;
+}
+
+.card{
+    margin: 0.5% 2% !important;
+    padding-bottom: 0 !important;
+}
+
+.infected{
+    border-bottom: 10px solid rgba(0,0,255,0.5);
+}
+
+.recovered{
+    border-bottom: 10px solid rgba(0,255,0,0.5);
+}
+
+.deaths{
+    border-bottom: 10px solid rgba(255,0,0,0.5);
+}
+
+.active{
+    border-bottom: 10px solid rgba(239,255,0,0.5);
+}
+
+.lastupdate {
+    margin-top: 15px !important;
+    text-align: right;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 15px !important;
+}
+
+@media (max-width: 750px){
+    .card{
+        margin: 2% 0 !important;
+    }
+}
