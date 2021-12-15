@@ -24,6 +24,12 @@
     margin-bottom: 6%;
 }
 
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media (max-width: 750px){
     .container{
         width: 100%;

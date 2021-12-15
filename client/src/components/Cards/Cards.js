@@ -1,13 +1,13 @@
 import React from 'react'
 import moment from 'moment'
 import Spinner from '../Spinner/Spinner';
-import { Card, CardContent, Typography, Grid} from '@material-ui/core';
+import { Card, CardContent, Typography, Grid, makeStyles } from '@material-ui/core';
 import styles from './Cards.module.css';
 import CountUp from 'react-countup';
 import cx from 'classnames';   // this is to apply two or more classes to div
 
 
-const Cards = ({ countryData }) => {
+const Cards = ({ countryData, predictedDataForCntry }) => {
 
     return (
         <div className={styles.container}>
@@ -49,7 +49,7 @@ const Cards = ({ countryData }) => {
                             {countryData && countryData[0]?.total_cases >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={150000000}
+                                    end={predictedDataForCntry[0].total_cases ? predictedDataForCntry[0].total_cases : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
@@ -93,7 +93,7 @@ const Cards = ({ countryData }) => {
                             {countryData && countryData[0]?.total_vaccinations >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={150000000}
+                                    end={predictedDataForCntry[0].total_vaccinations ? predictedDataForCntry[0].total_vaccinations : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
@@ -137,7 +137,7 @@ const Cards = ({ countryData }) => {
                             {countryData && countryData[0]?.total_deaths >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={150000000}
+                                    end={predictedDataForCntry[0].total_deaths ? predictedDataForCntry[0].total_deaths : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}

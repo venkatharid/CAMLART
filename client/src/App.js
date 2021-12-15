@@ -5,11 +5,11 @@ import Cards from './components/Cards/Cards';
 import Chart from './components/Chart/Chart';
 import CountryPicker from './components/CountryPicker/CountryPicker';
 import { fetchData, fetchDataByDates } from './api/index';
-//import coronaImage from './image/image.png'
 import Map from './components/Map/Map';
 import Layout from './components/Layout';
 import { createTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/core'
+import moment from 'moment';
 
 const theme = createTheme({    // it will override default setting of mui
   palette: {
@@ -23,7 +23,13 @@ class App extends React.Component {
     globalData: [],
     countryData: [],
     covidGlobalDataByDates: [],
-    countryDataByDates: []
+    countryDataByDates: [],
+    predictedDataForCntry: [{
+      total_cases: 0,
+      total_vaccinations: 0,
+      total_deaths: 0,
+      date: ''
+    }]
   }
 
 
@@ -38,29 +44,64 @@ class App extends React.Component {
     this.setState({ covidGlobalDataByDates: globaldataByDates });
 
     const countryDataByDates = this.state.covidGlobalDataByDates.filter(country => country[0].location === 'World')
-    this.setState({ countryDataByDates: countryDataByDates[0][0]['data'] });
+    this.findPredictedDataForCntry(countryDataByDates)
   }
 
   handleCountryChange = async (countryName) => {
+
     const countryData = this.state.globalData.filter(country => country[0].location === countryName)
 
     const countryDataByDates = this.state.covidGlobalDataByDates.filter(country => country[0].location === countryName);
 
+
+
     if (countryData.length) {
       this.setState({
-        countryData: countryData[0]
+        countryData: countryData[0],
+        predictedDataForCntry: [{
+          total_cases: 0,
+          total_vaccinations: 0,
+          total_deaths: 0,
+          date: ''
+        }]
       })
 
       if (countryDataByDates.length) {
-        this.setState({ countryDataByDates: countryDataByDates[0][0]['data'] })
+        this.findPredictedDataForCntry(countryDataByDates)
       }
     } else {
       this.setState({
-        countryDataByDates: []
+        countryDataByDates: [],
+        predictedDataForCntry: []
       })
     }
   }
 
+
+  findPredictedDataForCntry = (countryDataByDates) => {
+    const avgDays = 15;
+    const predictedArr = countryDataByDates[0][0]['data'].splice(-avgDays);
+
+    let total_cases = 0;
+    let total_vaccinations = 0;
+    let total_deaths = 0;
+
+    for (let i = 0; i < predictedArr.length; i++) {
+      total_cases += predictedArr[i].total_cases ? predictedArr[i].total_cases : 0
+      total_vaccinations += predictedArr[i].total_vaccinations ? predictedArr[i].total_vaccinations : 0
+      total_deaths += predictedArr[i].total_deaths ? predictedArr[i].total_deaths : 0
+    }
+
+    this.setState({
+      countryDataByDates: countryDataByDates[0][0]['data'],
+      predictedDataForCntry: [{
+        total_cases: ((predictedArr[predictedArr.length - 1].total_cases || 0) + total_cases) / avgDays,
+        total_vaccinations: ((predictedArr[predictedArr.length - 1].total_vaccinations || 0) + total_vaccinations) / avgDays,
+        total_deaths: ((predictedArr[predictedArr.length - 1].total_deaths || 0) + total_deaths) / avgDays,
+        date: moment(predictedArr[predictedArr.length - 1].date, 'YYYY-MM-DD').add(15, 'd').format('YYYY-MM-DD')
+      }]
+    })
+  }
 
 
   render() {
@@ -72,13 +113,16 @@ class App extends React.Component {
               <Switch>
                 <Route path="/" exact>
                   <div className={styles.container}>
-                    {/* <img className={styles.image} src={coronaImage} alt='logo' /> */}
-                    <Cards countryData={this.state.countryData} />
+                    <Cards
+                      countryData={this.state.countryData}
+                      predictedDataForCntry={this.state.predictedDataForCntry}
+                    />
                     <CountryPicker countriesData={this.state.globalData} handleCountryChange={this.handleCountryChange} />
 
                     <Chart
                       countryData={this.state.countryData}
                       countryDataByDates={this.state.countryDataByDates}
+                      predictedDataForCntry={this.state.predictedDataForCntry}
                     />
                   </div>
                 </Route>
