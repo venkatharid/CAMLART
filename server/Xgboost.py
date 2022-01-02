@@ -52,31 +52,60 @@ def index():
     if request.method == 'POST':
         country = request.json
     data = pd.read_csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv",parse_dates=True)
-    data = data.replace(np.nan, 0) #to replace missing values by 0
+    print(country)
+    data=data.loc[data['location']== country]
+    # For Deaths-df
     df = data[['date','total_deaths','location']]
-    df= df.loc[df['location']=="China"]
+    # For Confirmed Cases
+    cc = data[['date','total_cases','location']]
+    # For vaccination
+    vc = data[['date', 'total_vaccinations','location']]
     df['date'] = pd.to_datetime(df['date']).dt.date
     df = pd.DataFrame(df.groupby(df['date'])['total_deaths'].sum())
+    cc['date'] = pd.to_datetime(cc['date']).dt.date
+    cc = pd.DataFrame(cc.groupby(cc['date'])['total_cases'].sum())
+    vc['date'] = pd.to_datetime(vc['date']).dt.date
+    vc = pd.DataFrame(vc.groupby(vc['date'])['total_vaccinations'].sum())
     training_df = df.groupby(['date'])['total_deaths'].sum().reset_index()
     training_df['date'] = pd.to_datetime(training_df['date']).dt.date
+    training_df1 = cc.groupby(['date'])['total_cases'].sum().reset_index()
+    training_df1['date'] = pd.to_datetime(training_df1['date']).dt.date
+    training_df2 = vc.groupby(['date'])['total_vaccinations'].sum().reset_index()
+    training_df2['date'] = pd.to_datetime(training_df2['date']).dt.date
     training_df['Year'] = pd.to_datetime(training_df['date']).dt.year
     training_df['Week'] = pd.to_datetime(training_df['date']).dt.week
     training_df['Day']  = pd.to_datetime(training_df['date']).dt.day
     training_df['WeekDay'] = pd.to_datetime(training_df['date']).dt.dayofweek
     training_df['Weekend'] = training_df.WeekDay.isin([5, 6]).astype(int)
-    training_df.set_index('date', inplace=True)
-    filename = 'Xgboost.sav'
-    gridcv_xgb = pickle.load(open(filename, 'rb'))
-    test = pd.read_excel('predictionempty.xlsx', parse_dates=[0], index_col=[0], engine='openpyxl')
+    training_df.set_index('date', inplace=True) 
+    training_df1['Year'] = pd.to_datetime(training_df1['date']).dt.year
+    training_df1['Week'] = pd.to_datetime(training_df1['date']).dt.week
+    training_df1['Day']  = pd.to_datetime(training_df1['date']).dt.day
+    training_df1['WeekDay'] = pd.to_datetime(training_df1['date']).dt.dayofweek
+    training_df1['Weekend'] = training_df1.WeekDay.isin([5, 6]).astype(int)
+    training_df1.set_index('date', inplace=True)
+    training_df2['Year'] = pd.to_datetime(training_df2['date']).dt.year
+    training_df2['Week'] = pd.to_datetime(training_df2['date']).dt.week
+    training_df2['Day']  = pd.to_datetime(training_df2['date']).dt.day
+    training_df2['WeekDay'] = pd.to_datetime(training_df2['date']).dt.dayofweek
+    training_df2['Weekend'] = training_df2.WeekDay.isin([5, 6]).astype(int)
+    training_df2.set_index('date', inplace=True)
+    gridcv_xgb = pickle.load(open('China_Deaths.sav', 'rb'))
+    gridcv_xgb1 = pickle.load(open('China_Deaths.sav', 'rb'))
+    gridcv_xgb2 = pickle.load(open('China_Deaths.sav', 'rb'))
+    test = pd.read_excel('dates.xlsx', parse_dates=[0], index_col=[0], engine='openpyxl')
     pred_x, pred_y = create_features(test, label='Deaths')
-    test['xgb_Prediction'] = gridcv_xgb.predict(pred_x)
-    test.drop(['Deaths','dayofweek', 'quarter', 'month', 'year', 'dayofyear','dayofmonth', 'weekofyear'], axis=1, inplace=True)
+    test['xgb_Prediction_Deaths'] = gridcv_xgb.predict(pred_x)
+    pred_x1, pred_y1 = create_features(test, label='Confirmed Cases')
+    test['xgb_Prediction_cc'] = gridcv_xgb1.predict(pred_x1)
+    pred_x2, pred_y2 = create_features(test, label='Vaccinations')
+    test['xgb_Prediction_vc'] = gridcv_xgb2.predict(pred_x1)
+    test.drop(['Deaths','dayofweek', 'quarter', 'month', 'year', 'dayofyear','dayofmonth', 'weekofyear','Confirmed Cases','Vaccinations'], axis=1, inplace=True)
     test.reset_index(inplace=True)
     test["Date"] = test["Date"].astype(str)
     js = test.to_json(orient="records")
     print(js)
     return js
-
 
     
 if __name__ == '__main__':
