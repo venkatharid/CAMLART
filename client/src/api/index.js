@@ -38,3 +38,24 @@ export const fetchDataByDates = async () => {
         console.log(error);
     }
 }
+
+export const putDatapython = async () => {
+    var formData= {
+        country: "China"
+    }
+    try {
+        const article = { country: 'China' };
+    axios.post('http://127.0.0.1:5000/app', article)
+        .then(response => {
+            console.log(response.data)
+        })
+      .catch(error => {
+        console.log(error)
+      })
+    }
+      catch (error) {
+        console.log(error);
+    }
+};
+
+putDatapython();
