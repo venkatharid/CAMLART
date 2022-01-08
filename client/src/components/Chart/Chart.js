@@ -11,10 +11,10 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
             <>
                 <Bar
                     data={{   // two braces, one for using JS code in JSX and second for object
-                        labels: ['Total Infected', `Predicted Infected till ${predictedDataForCntry[0].date}`],
+                        labels: ['Total Infected', `${predictedDataForCntry.length === 0 ? "No Predicted Infected Data Avaialable" : `Predicted Infected till ${predictedDataForCntry.length && predictedDataForCntry[predictedDataForCntry.length - 1].Date}`}`],
                         datasets: [{
                             data: [countryData[0].total_cases ? countryData[0].total_cases : 0,
-                            predictedDataForCntry[0].total_cases ? predictedDataForCntry[0].total_cases.toFixed() : 0
+                            predictedDataForCntry.length == 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_cc ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_cc.toFixed() : 0
                             ],
                             label: 'People',
                             backgroundColor: ['rgba(0,0,255)', 'rgba(0,0,255,0.5)']
@@ -28,11 +28,11 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
 
                 <Bar
                     data={{
-                        labels: ['Total Vaccinations', `Predicted Vaccinations till ${predictedDataForCntry[0].date}`],
+                        labels: ['Total Vaccinations', `${predictedDataForCntry.length === 0 ? "No Predicted Vaccinations Data Avaialable" : `Predicted Vaccinations till ${predictedDataForCntry.length && predictedDataForCntry[predictedDataForCntry.length - 1].Date}`}`],
                         datasets: [{
                             data: [
                                 countryData[0]?.total_vaccinations ? countryData[0]?.total_vaccinations : 0,
-                                predictedDataForCntry[0].total_vaccinations ? predictedDataForCntry[0].total_vaccinations.toFixed() : 0],
+                                predictedDataForCntry.length == 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_vc ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_vc.toFixed() : 0],
                             label: 'People',
                             backgroundColor: ['rgba(0,255,0)', 'rgba(0,255,0,0.5)']
                         }]
@@ -45,11 +45,11 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
 
                 <Bar
                     data={{
-                        labels: ['Deaths', `Predicted Deaths till ${predictedDataForCntry[0].date}`],
+                        labels: ['Deaths', `${predictedDataForCntry.length === 0 ? "No Predicted Deaths Data Avaialable" : `Predicted Deaths till ${predictedDataForCntry.length && predictedDataForCntry[predictedDataForCntry.length - 1].Date}`}`],
                         datasets: [{
                             data: [
                                 countryData[0]?.total_deaths ? countryData[0]?.total_deaths : 0,
-                                predictedDataForCntry[0].total_deaths ? predictedDataForCntry[0].total_deaths.toFixed() : 0
+                                predictedDataForCntry.length == 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_Deaths ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_Deaths.toFixed() : 0
                             ],
                             label: 'People',
                             backgroundColor: ['rgba(255,0,0)', 'rgba(255,0,0,0.5)']
@@ -85,11 +85,12 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
                     />
 
 
-                    <Line
+
+                    {predictedDataForCntry.length ? <Line
                         data={{
-                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date),
+                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date || data.Date),
                             datasets: [{
-                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_cases),
+                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_cases || data?.xgb_Prediction_cc),
                                 label: 'Predicted Infected',
                                 borderColor: 'rgba(0,0,255)',
                                 fill: true
@@ -100,7 +101,8 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
                             legend: { display: true },
                             title: { display: true, text: `Predicted status of ${countryData[0]?.location ? countryData[0]?.location : 'country'}` }
                         }}
-                    />
+                    /> :
+                        <span className={styles.msg}> No Predicted Infected Data Available </span>}
 
                 </div>
                 <div className={styles.marginBottom} />
@@ -119,19 +121,20 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
                         }}
                     />
 
-
-                    <Line
+                    {predictedDataForCntry.length ? <Line
                         data={{    // two braces, one for using JS code in JSX and second for object 
-                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date),
+                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date || data.Date),
                             datasets: [{
-                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_vaccinations),
+                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_vaccinations || data?.xgb_Prediction_vc),
                                 label: 'Predicted Total Vaccinations',
                                 borderColor: 'rgba(0,255,0)',
                                 fill: true
                             }
                             ]
                         }}
-                    />
+                    /> :
+                        <span className={styles.msg}> No Predicted Vaccinations Data Available </span>}
+
                 </div>
                 <div className={styles.marginBottom} />
 
@@ -150,11 +153,11 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
 
                     />
 
-                    <Line
+                    {predictedDataForCntry.length ? <Line
                         data={{
-                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date),
+                            labels: [...countryDataByDates, ...predictedDataForCntry].map((data, i) => data.date || data.Date),
                             datasets: [{
-                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_deaths),
+                                data: [...countryDataByDates, ...predictedDataForCntry].map((data) => data?.total_deaths || data?.xgb_Prediction_Deaths),
                                 label: 'Deaths',
                                 borderColor: 'rgba(255,0,0)',
                                 fill: true
@@ -162,7 +165,8 @@ const Chart = ({ countryData, countryDataByDates, predictedDataForCntry }) => {
                             ]
                         }}
 
-                    />
+                    /> :
+                        <span className={styles.msg}> No Predicted Deaths Data Available </span>}
                 </div>
             </> : <i className="fas fa-spinner fa-spin fa-fw fa-5x"></i>
 

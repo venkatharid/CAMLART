@@ -39,23 +39,14 @@ export const fetchDataByDates = async () => {
     }
 }
 
-export const putDatapython = async () => {
-    var formData= {
-        country: "China"
-    }
+export const fetchPredictedData = async (cntryName) => {
     try {
-        const article = { country: 'China' };
-    axios.post('http://127.0.0.1:5000/app', article)
-        .then(response => {
-            console.log(response.data)
-        })
-      .catch(error => {
-        console.log(error)
-      })
+        const article = { country: cntryName };
+        const { data } = await axios.post('/app', article)
+        console.log(data)
+        return data;
     }
-      catch (error) {
+    catch (error) {
         console.log(error);
     }
 };
-
-putDatapython();

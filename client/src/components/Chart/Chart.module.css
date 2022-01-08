@@ -30,6 +30,11 @@
     align-items: center;
 }
 
+.msg {
+    white-space: nowrap;
+    margin: 3vw;
+}
+
 @media (max-width: 750px){
     .container{
         width: 100%;

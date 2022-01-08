@@ -4,7 +4,7 @@ import styles from './App.module.css';
 import Cards from './components/Cards/Cards';
 import Chart from './components/Chart/Chart';
 import CountryPicker from './components/CountryPicker/CountryPicker';
-import { fetchData, fetchDataByDates } from './api/index';
+import { fetchData, fetchDataByDates, fetchPredictedData } from './api/index';
 import Map from './components/Map/Map';
 import Layout from './components/Layout';
 import { createTheme } from '@material-ui/core/styles'
@@ -24,12 +24,7 @@ class App extends React.Component {
     countryData: [],
     covidGlobalDataByDates: [],
     countryDataByDates: [],
-    predictedDataForCntry: [{
-      total_cases: 0,
-      total_vaccinations: 0,
-      total_deaths: 0,
-      date: ''
-    }]
+    predictedDataForCntry: []
   }
 
 
@@ -58,12 +53,7 @@ class App extends React.Component {
     if (countryData.length) {
       this.setState({
         countryData: countryData[0],
-        predictedDataForCntry: [{
-          total_cases: 0,
-          total_vaccinations: 0,
-          total_deaths: 0,
-          date: ''
-        }]
+        predictedDataForCntry: []
       })
 
       if (countryDataByDates.length) {
@@ -78,29 +68,21 @@ class App extends React.Component {
   }
 
 
-  findPredictedDataForCntry = (countryDataByDates) => {
-    const avgDays = 15;
-    const predictedArr = countryDataByDates[0][0]['data'].splice(-avgDays);
+  findPredictedDataForCntry = async (countryDataByDates) => {
+    const predictedData = await fetchPredictedData(countryDataByDates[0][0]['location']);
+    console.log(predictedData)
 
-    let total_cases = 0;
-    let total_vaccinations = 0;
-    let total_deaths = 0;
-
-    for (let i = 0; i < predictedArr.length; i++) {
-      total_cases += predictedArr[i].total_cases ? predictedArr[i].total_cases : 0
-      total_vaccinations += predictedArr[i].total_vaccinations ? predictedArr[i].total_vaccinations : 0
-      total_deaths += predictedArr[i].total_deaths ? predictedArr[i].total_deaths : 0
+    if (predictedData) {
+      this.setState({
+        countryDataByDates: countryDataByDates[0][0]['data'],
+        predictedDataForCntry: predictedData
+      })
+    } else {
+      this.setState({
+        countryDataByDates: countryDataByDates[0][0]['data'],
+        predictedDataForCntry: []
+      })
     }
-
-    this.setState({
-      countryDataByDates: countryDataByDates[0][0]['data'],
-      predictedDataForCntry: [{
-        total_cases: ((predictedArr[predictedArr.length - 1].total_cases || 0) + total_cases) / avgDays,
-        total_vaccinations: ((predictedArr[predictedArr.length - 1].total_vaccinations || 0) + total_vaccinations) / avgDays,
-        total_deaths: ((predictedArr[predictedArr.length - 1].total_deaths || 0) + total_deaths) / avgDays,
-        date: moment(predictedArr[predictedArr.length - 1].date, 'YYYY-MM-DD').add(15, 'd').format('YYYY-MM-DD')
-      }]
-    })
   }
 
 

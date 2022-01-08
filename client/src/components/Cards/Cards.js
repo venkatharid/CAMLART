@@ -11,7 +11,7 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
 
     return (
         <div className={styles.container}>
-            
+
             <Typography className={styles.heading} variant='subtitle2' gutterBottom component="div">
                 Current status of {countryData[0]?.location ? countryData[0]?.location : '###'}
             </Typography>
@@ -23,7 +23,7 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                             <i style={{ color: "rgba(0,0,255,0.5)", width: '25px' }} className="fas fa-clinic-medical"></i> {' '}Total Cases
                         </Typography>
 
-                        <Typography variant='h5' gutterBottom style={{width: 'auto'}}>
+                        <Typography variant='h5' gutterBottom style={{ width: 'auto' }}>
                             {countryData && countryData[0]?.total_cases >= 0 ?
                                 <CountUp
                                     start={0}
@@ -45,18 +45,18 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                             <i style={{ color: "rgba(0,0,255,0.5)", width: '25px' }} className="fas fa-clinic-medical"></i> {' '}Predicted Total Cases
                         </Typography>
 
-                        <Typography variant='h5' gutterBottom style={{width: 'auto'}}>
+                        <Typography variant='h5' gutterBottom style={{ width: 'auto' }}>
                             {countryData && countryData[0]?.total_cases >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={predictedDataForCntry[0].total_cases ? predictedDataForCntry[0].total_cases : 0}
+                                    end={predictedDataForCntry.length === 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_cc ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_cc : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
                         </Typography>
 
                         <Typography variant='body2' gutterBottom>
-                           Predicted Total number of cases of COVID-19
+                            Predicted Total number of cases of COVID-19 {predictedDataForCntry.length === 0 ? '0/0/0' : predictedDataForCntry[predictedDataForCntry.length - 1].Date}
                         </Typography>
                     </CardContent>
                 </Grid>
@@ -76,7 +76,7 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
                         </Typography>
-             
+
                         <Typography variant='body2' gutterBottom>
                             Number of vaccinations of COVID-19
                         </Typography>
@@ -93,14 +93,14 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                             {countryData && countryData[0]?.total_vaccinations >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={predictedDataForCntry[0].total_vaccinations ? predictedDataForCntry[0].total_vaccinations : 0}
+                                    end={predictedDataForCntry.length === 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_vc ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_vc : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
                         </Typography>
-             
+
                         <Typography variant='body2' gutterBottom>
-                            Predicted Number of vaccinations of COVID-19
+                            Predicted Number of vaccinations of COVID-19 {predictedDataForCntry.length === 0 ? '0/0/0' : predictedDataForCntry[predictedDataForCntry.length - 1].Date}
                         </Typography>
                     </CardContent>
                 </Grid>
@@ -120,7 +120,7 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
                         </Typography>
-              
+
                         <Typography variant='body2' gutterBottom>
                             Number of deaths caused by COVID-19
                         </Typography>
@@ -137,21 +137,21 @@ const Cards = ({ countryData, predictedDataForCntry }) => {
                             {countryData && countryData[0]?.total_deaths >= 0 ?
                                 <CountUp
                                     start={0}
-                                    end={predictedDataForCntry[0].total_deaths ? predictedDataForCntry[0].total_deaths : 0}
+                                    end={predictedDataForCntry.length === 0 ? 0 : predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_Deaths ? predictedDataForCntry[predictedDataForCntry.length - 1].xgb_Prediction_Deaths : 0}
                                     separator=','
                                     duration={2.1}  // seconds
                                 /> : <Spinner />}
                         </Typography>
-              
+
                         <Typography variant='body2' gutterBottom>
-                            Predicted Number of deaths caused by COVID-19
+                            Predicted Number of deaths caused by COVID-19 {predictedDataForCntry.length === 0 ? '0/0/0' : predictedDataForCntry[predictedDataForCntry.length - 1].Date}
                         </Typography>
                     </CardContent>
                 </Grid>
 
             </Grid>
             <Typography color='textSecondary' className={styles.lastupdate}>
-                            LastUpdated: {countryData[0]?.last_updated_date && moment(countryData[0].last_updated_date).format("DD-MMM-YYYY")}
+                LastUpdated: {countryData[0]?.last_updated_date && moment(countryData[0].last_updated_date).format("DD-MMM-YYYY")}
             </Typography>
         </div>
     )

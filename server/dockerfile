@@ -6,7 +6,14 @@ COPY . .
 
 # Add bash
 RUN pip install flask
+RUN pip install xgboost
+RUN pip install sklearn
+RUN pip install flask_cors
+RUN pip install pandas
+RUN pip install numpy
+RUN pip install boto3
+ 
 
 EXPOSE 5000
 
-CMD ["python", "server.py"]
+CMD ["python", "Xgboost.py"]
